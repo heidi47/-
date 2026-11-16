@@ -1,0 +1,117 @@
+---
+title: "Version Control in RStudio" 
+subtitle: "A GUI-Based Workflow | Data Analysis for Decision-Making" 
+author: "Yung Chun, Yang<br />Email: heidi930407@gmail.com<br />Student ID: 401133845" 
+date: "2026-11-18" 
+format: 
+  revealjs: 
+    slide-number: true 
+    theme: league
+    transition: slide 
+--- 
+
+## Why Git &amp; RStudio GUI? 
+<style>
+  .reveal-viewport {
+    background-color: #cbd5e1 !important;
+  }
+</style>
+- **The Problem with Manual Versioning**: 
+  - `analysis_v1.R`, `analysis_v2_final.R`, `analysis_FINAL.R` 
+  - High risk of data redundancy and overwriting decision logic. 
+- **The Solution: Git Version Control**: 
+  - Cryptographic project history &amp; absolute auditability. 
+  - **RStudio GUI**: Point-and-click interface lowers entry barriers for non-CS analysts. 
+  
+--- 
+
+## The Four Architectural States of Git 
+
+::: {.incremental} 
+1. **Working Directory**: Your active local workspace. 
+2. **Staging Area (Index)**: Preparing selected edits for snapshotting. 
+3. **Local Repository**: On-disk `.git` database storing committed snapshots. 
+4. **Remote Repository**: Cloud servers (e.g., GitHub) for team synchronization. 
+::: 
+
+---
+
+## Terminal CLI vs. RStudio GUI
+
+| Analytical Dimension | Terminal CLI | RStudio GUI | Decision Impact | 
+|:---|:---|:---|:---| 
+| **Learning Curve** | High (Command memorization) | Low (Visual interface) | Faster onboarding | 
+| **Change Inspection** | `git diff` text | Color-coded **Diff Window** | Reduces human error | 
+| **Staging** | `git add <file>` | Visual checkbox (**Staged**) | Prevents mistake staging |
+| **Syncing** | `git push / pull` | One-click directional arrows | Simplifies team sync |
+
+---
+
+## Core GUI Workflow in RStudio
+
+::: {.columns}
+::: {.column width="50%"}
+### Step 1 & 2: Stage & Diff
+- Check **Staged** box in Git Tab.
+- Click **Diff** to visually review additions (green) & deletions (red).
+:::
+
+::: {.column width="50%"}
+### Step 3 & 4: Commit & Sync
+- Enter a concise **Commit Message**.
+- Click **Push (Green Up Arrow)** to sync with GitHub.
+:::
+:::
+
+---
+
+## Credential Setup (`usethis` & `gitcreds`)
+
+```{r}
+#| eval: false
+#| echo: true
+library(usethis)
+library(gitcreds)
+
+# 1. Configure Global Git Identity
+use_git_config(
+  user.name  = "Yung Chun, Yang",
+  user.email = "heidi930407@gmail.com"
+)
+
+# 2. Request & Store GitHub Personal Access Token (PAT)
+create_github_token()
+gitcreds_set()
+```
+
+---
+
+## Project Hygiene & Branching
+
+- **`.gitignore` File Management**:
+  - Exclude raw CSVs, private keys, and `.Rhistory`.
+  - Right-click untracked files in Git Tab ➔ **Ignore...**
+
+- **Branching Strategy**:
+  - Create experimental branches (e.g., `feature-logistic-regression`).
+  - Merge back into `main` via GitHub Pull Requests safely.
+
+---
+
+## Hands-on Class Exercise (5 Mins)
+
+### 🎯 Practical Task:
+1. Ensure `handout.qmd` & `presentation.qmd` are saved.
+2. Open **Git Tab** ➔ Check **Staged** for all modified files.
+3. Click **Commit** ➔ Enter message: `"Complete submission"`.
+4. Click **Push (Green Up Arrow)** to upload to GitHub!
+
+---
+
+## Q&A & References
+
+- **Handout References**: See full APA bibliography in `handout.html`.
+- **Course Syllabus**: Huber, S. (2025). *Data Analysis for Decision-Making*.
+- **Git Guide**: Batra, N. et al. (2024). *The Epidemiologist R Handbook*.
+
+*Thank you for your attention!*

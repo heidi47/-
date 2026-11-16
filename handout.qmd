@@ -1,0 +1,179 @@
+---
+title: "Version Control in RStudio: A GUI-Based Workflow" 
+subtitle: "Data Analysis for Decision-Making — Course Handout" 
+author: "Yung Chun, Yang (Email: heidi930407@gmail.com<br>Student ID: 401133845)"
+date: "2026-11-18" 
+bibliography: references.bib
+nocite: | 
+  @*
+format: 
+  html: 
+    toc: true 
+    toc-depth: 3 
+    number-sections: true 
+    theme: cosmo 
+    embed-resources: true
+    include-in-header: 
+      text: |
+                         <style>
+                           h1, h2 { color: #000000 !important; font-weight: 700; }
+                           h3, h4 { color: #6c757d !important; font-weight: 600; }
+                           </style>
+--- 
+
+## Introduction &amp; Background 
+
+In modern data-driven decision-making, reproducibility and systematic tracking of statistical scripts are essential. Traditional manual backup methods (e.g., renaming files to `script_v1.R`, `script_final.R`) frequently cause data redundancy and tracking errors. 
+
+Version control using **Git** provides a clear snapshot history of project development. While Git was originally designed for the terminal command line, integrated development environments like **RStudio** offer a Point-and-Click Graphical User Interface (GUI), making version control accessible to data analysts without extensive command-line knowledge.
+
+### The Four Architectural States of Git 
+Understanding version control requires distinguishing between Git's four logical zones: 
+1. **Working Directory**: Your active local workspace where files are created and edited. 
+2. **Staging Area (Index)**: A intermediate zone where selected modifications are prepared for snapshotting. 
+3. **Local Repository**: The on-disk cryptographic database (`.git` directory) storing committed project snapshots. 
+4. **Remote Repository**: Cloud-hosted servers (e.g., GitHub, GitLab) that enable team synchronization and backup. 
+
+### Feature Comparison: Terminal CLI vs. RStudio GUI 
+
+| Analytical Dimension | Terminal CLI | RStudio GUI | Decision-Making Impact | 
+|:---|:---|:---|:---|
+| **Learning Curve** | High (Command memorization required) | Low (Visual point-and-click interface) | Accelerates onboarding for non-CS analysts | 
+| **Change Inspection** | Text-heavy (`git diff`) | Color-coded **Visual Diff Window** | Reduces human error when checking code edits | 
+| **Staging Operations** | Manual syntax (`git add <file>`) | Visual checkbox (**Staged**) | Prevents accidental staging of unwanted files |
+| **Commit Creation** | `git commit -m "message"` | Dedicated dialog box with history preview | Encourages descriptive, contextual commit notes |
+| **Remote Syncing** | `git push` / `git pull` | One-click directional arrows | Simplifies collaborative cloud synchronization |
+
+---
+
+## Core GUI Operations in RStudio
+
+Managing project history in RStudio follows a four-step visual workflow via the **Git Tab** (located in the top-right pane):
+
+### Step 1: Staging File Modifications 
+When files are edited, created, or deleted within an RStudio project, they appear in the Git Tab with status icons (e.g., `M` for Modified, `?` for Untracked). Checking the **Staged** box adjacent to a file adds it to Git's index. 
+
+### Step 2: Line-by-Line Visual Inspection (Diff Window) 
+Clicking the **Diff** button opens an interactive viewer displaying side-by-side or unified code differences:
+* **Green Highlighted Rows**: Represent newly added lines of code.
+* **Red Highlighted Rows**: Represent removed or overwritten lines of code. 
+
+### Step 3: Recording Snapshots (Commits) 
+A **Commit** acts as a permanent, immutable checkpoint. Analysts enter a concise commit message in the upper-right text area and click **Commit**. 
+* *Commit Message Standard*: Use the imperative mood (e.g., `"Add demographic data cleaning pipeline"` rather than \`"I cleaned data"\`). 
+
+### Step 4: Cloud Synchronization (Push &amp; Pull) 
+To maintain alignment across organizational teams: 
+* **Pull (Blue Down Arrow)**: Fetches and merges updates from GitHub into the local working directory. * **Push (Green Up Arrow)**: Uploads validated local commits to the remote GitHub repository. 
+
+---
+
+## Credential Authentication via `usethis`and `gitcreds`
+
+Modern version control platforms require secure token authentication rather than traditional plain-text passwords. To establish HTTPS credentials inside RStudio without touching the system terminal, analysts employ the `usethis` and `gitcreds` R packages.
+
+```{r} 
+#| eval: false 
+#| echo: true 
+# ============================================================================== 
+# RStudio Git Credentials Setup Script 
+# Author: Yung Chun, Yang 
+# Purpose: Configure Git user identity and GitHub Personal Access Token (PAT) 
+# ============================================================================== 
+# 1. Package Installation and Loading 
+if (!requireNamespace("usethis", quietly = TRUE)) { install.packages("usethis") 
+} 
+if (!requireNamespace("gitcreds", quietly = TRUE)) { install.packages("gitcreds") 
+} 
+library(usethis) 
+library(gitcreds) 
+
+# 2. Configure Global Git Identity 
+use_git_config( 
+  user.name = "Yung Chun, Yang", 
+  user.email = "heidi930407@gmail.com" 
+) 
+
+# 3. Request GitHub Perso nal Access Token (PAT) 
+# This opens GitHub in your browser with appropriate scopes pre-selected create\_github\_token() 
+
+# 4. Store Token Securely in System Credential Store # Paste your generated PAT when prompted in the R Console gitcreds\_set()
+```
+## Project Hygiene &amp; Managing `.gitignore` 
+
+Not all project files belong in version control. Raw data files containing sensitive personal information (PII), private API keys, or temporary computational caches should be excluded from Git history to avoid security breaches and repository bloat. 
+
+### Managing Exclusions in RStudio: 
+* **The `.gitignore` File**: A plain-text configuration file listing patterns of files Git should ignore. 
+* **Common R Exclusion Rules**: 
+  
+  ```text
+
+  .Rproj.user/       # Local RStudio session settings    .Rhistory          # Command history logs 
+  *.RData            # Saved workspace images      
+  data/raw\_data.csv # Large or confidential data files   ``` 
+* **GUI Context Shortcut**: In RStudio's Git Tab, right-click any untracked file and select **Ignore...** to add it to `.gitignore` automatically.
+
+---
+
+## Branching Strategy for Experimental Analysis 
+
+When testing alternative statistical models or exploratory data visualizations, working directly on the primary (`main`) branch poses risks to production code. **Branching** creates an isolated environment for experimentation. 
+
+### GUI Branch Operations in RStudio: 
+1. **Create Branch**: Click the **New Branch** icon (top-right of Git Tab). 
+2. **Name Branch**: Enter a descriptive name (e.g., `feature-logistic-regression`). 
+3. **Switch &amp; Edit**: RStudio automatically switches workspace focus to the new branch. All commits remain isolated within this branch. 
+4. **Merge Back**: Once validated, branches can be merged back into `main` via GitHub Pull Requests. 
+
+--- 
+
+## Visualizing & Resolving Merge Conflicts 
+
+A **Merge Conflict** occurs when concurrent edits are submitted to the exact same line of a shared script, forcing Git to pause and request human intervention. 
+
+### Conflict Marker Anatomy in RStudio Editor: 
+
+```text 
+<<<<<< HEAD (Your Current Local Edit) 
+data_clean <- df %>% filter(age >= 18) 
+=======
+data_clean <- df %>% filter(age > 21)
+>>>>>>> origin/main (Incoming Remote Edit from GitHub) 
+```
+
+### Three-Step Resolution Protocol:
+1. **Manual Editing**: Open the flagged script in RStudio. Decide which code logic to retain and delete all conflict marker lines (`<<<<<<<`, `=======`, `>>>>>>>`). 
+2. **Staging**: Save the file, return to the Git Tab, and check the **Staged** box next to the resolved file.
+3. **Finalize Commit**: Click **Commit** and enter a resolution note (e.g., `"Resolve conflict in age filtering criteria"`). 
+
+--- 
+
+## Hands-on Class Exercise: 5-Minute Practical 
+
+### 🎯 Step-by-Step Practical Task 
+Complete the following sequence in RStudio to record and push your completed assignment: 
+
+1. Ensure both `presentation.qmd` and `handout.qmd` are saved. 
+2. Open the **Git Tab** in the top-right pane of RStudio. 
+3. Check the **Staged** box next to `handout.qmd`, `presentation.qmd`, and `references.bib`. 
+4. Click **Commit**, type `"Complete APA handout, presentation, and references"`, and click **Commit**. 
+5. Click the **Green Up Arrow (Push)** to upload all artifacts to your GitHub repository. 
+
+---
+
+## Affidavit {.unnumbered}
+
+I hereby declare that I have authored this handout and the accompanying presentation independently, using only the sources and aids explicitly referenced. All text passages, code, ideas, and visual representations taken verbatim or in substance from published or unpublished works have been properly cited and attributed in accordance with academic standards. 
+
+* **Author Name**: Yung Chun, Yang 
+* **Student ID**: 401133845 
+* **Date**: November 18, 2026 
+* **Location**: Cologne 
+
+--- 
+
+## References 
+
+::: {#refs} 
+:::

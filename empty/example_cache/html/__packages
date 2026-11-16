@@ -1,0 +1,17 @@
+conflicted
+tidyverse
+ggplot2
+tibble
+tidyr
+readr
+purrr
+dplyr
+stringr
+forcats
+lubridate
+flextable
+ftExtra
+apa7
+knitr
+svglite
+patchwork
