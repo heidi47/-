@@ -111,6 +111,9 @@ gitcreds_set()
 ## Q&A & References
 
 - **Handout References**: See full APA bibliography in `handout.html`.
+
+![](handout_qr.png){fig-align="center" width="900px"}
+
 - **Course Syllabus**: Huber, S. (2025). *Data Analysis for Decision-Making*.
 - **Git Guide**: Batra, N. et al. (2024). *The Epidemiologist R Handbook*.
 
